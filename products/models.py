@@ -1,5 +1,8 @@
 from django.db import models
 from PIL import Image
+from django.utils import timezone
+import os
+import uuid
 
 # Create your models here.
 class Category(models.TextChoices):
@@ -30,6 +33,23 @@ class Product(models.Model):
          super().save(*args, **kwargs)
 
          if self.imagem:
+            ext = os.path.splitext(self.imagem.name)[1] # pegar a extensao
+            self_name = "".join(
+                c for c in self.nome if c.isalnum() or c in (" ", "_", "-")
+            ).rstrip() # Aqui remove os caracters especiais
+            self_name = self_name.replace(" ", "_").lower()
+
+            new_name = f"{self_name}_{uuid.uuid4().hex[:8]}{ext}"
+            new_path = os.path.join("Images_products", new_name)
+            full_old_path = self.imagem.path
+            full_new_path = os.path.join(os.path.dirname(full_old_path), new_name)
+
+            # Aqui renomeia o arquivo no disco
+            os.rename(full_old_path, full_new_path)
+
+            self.imagem.name = new_path
+            super().save(update_fields=["imagem"])
+
             img = Image.open(self.imagem.path)
             if img.mode in ("RGB", "P"):
                 img = img.convert("RGB")
@@ -37,4 +57,5 @@ class Product(models.Model):
             max_size = (1080, 1080)
             if img.height != 1080 or img.width != 1080:
                  img.thumbnail(max_size)
-                 img.save(self.imagem.path, format="JPEG", quality=95)
+
+            img.save(self.imagem.path, format="JPEG", quality=95)
