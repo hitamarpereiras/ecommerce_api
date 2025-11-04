@@ -1,5 +1,6 @@
 from django.db import models
 from PIL import Image
+import supabase
 
 # Create your models here.
 class Categoria(models.TextChoices):
@@ -18,7 +19,8 @@ class Produto(models.Model):
     descricao = models.TextField(default="Sem descrição", max_length=300)
     preco = models.DecimalField(decimal_places=2, max_digits=10, default=0)
     estoque = models.IntegerField(default=0)
-    imagem = models.ImageField(upload_to="imagens_produtos", blank=False)
+    #imagem = models.ImageField(upload_to="imagens_produtos", blank=False)
+    imagem = models.URLField(max_length=500, blank=True, null=True)
     promocao = models.BooleanField(default=False)
     hora_criacao = models.TimeField(auto_now_add=True)
     data_criacao = models.DateField(auto_now_add=True)
