@@ -1,6 +1,5 @@
 from django.db import models
 from PIL import Image
-from datetime import datetime
 
 # Create your models here.
 class Categoria(models.TextChoices):
@@ -21,9 +20,9 @@ class Produto(models.Model):
     estoque = models.IntegerField(default=0)
     imagem = models.ImageField(upload_to="imagens_produtos", blank=False)
     promocao = models.BooleanField(default=False)
-    hora_criacao = models.DateTimeField(default=datetime.now().hour)
-    data_criacao = models.DateTimeField(default=datetime.now().date)
-
+    hora_criacao = models.TimeField(auto_now_add=True)
+    data_criacao = models.DateField(auto_now_add=True)
+        
     def __str__(self):
         return self.nome[:24] + "..."
     
