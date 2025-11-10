@@ -37,10 +37,10 @@ def upload_image(file_bytes, filename):
     return url_publica
 
 class Categoria(models.TextChoices):
-        BEBIDAS = 'Bebidas', 'Bebidas'
-        DOCES = 'Doces', 'Doces'
-        SALGADOS = 'Salgados', 'Salgados'
-        OUTROS = 'Outros', 'Outros'
+        BEBIDAS = 'bebidas', 'bebidas'
+        DOCES = 'doces', 'doces'
+        SALGADOS = 'salgados', 'salgados'
+        OUTROS = 'outros', 'outros'
 
 class Produto(models.Model):
     nome = models.CharField(max_length=80, blank=False)
