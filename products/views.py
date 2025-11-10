@@ -1,9 +1,10 @@
-from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import Produto
+from .serializers import ProdutoSerializer
 
-def produtos(request):
-    if request.method == 'GET':
-        #Apenas testes
-        produtos = [
-            {'id': 1, 'nome': 'Tablete Samsung', 'preco': 689.00},
-        ]
-        return JsonResponse(produtos, safe=False)
+@api_view(['GET'])
+def list_products(request):
+    products = Produto.objects.all()
+    serializer = ProdutoSerializer(products, many=True)
+    return Response(serializer.data)
