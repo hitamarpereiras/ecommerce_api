@@ -1,4 +1,5 @@
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
@@ -42,3 +43,20 @@ def list_products(request):
     serializer = ProdutoSerializer(products, many=True)
     return Response(serializer.data)
 
+# Metodo Post
+class ProdutoCreateView(APIView):
+
+    def post(self, request):
+        serializer = ProdutoSerializer(data=request.data)
+
+        if serializer.is_valid():
+            produto = serializer.save()
+            return Response(
+                {
+                    "message": "Produto salvo com sucesso!",
+                    "produto": ProdutoSerializer(produto).data
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

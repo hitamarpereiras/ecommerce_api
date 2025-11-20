@@ -2,4 +2,5 @@ venv/
 __pycache__/
 database/
 database/
+site_teste/
 .env
