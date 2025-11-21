@@ -8,10 +8,9 @@ from .models import Produto
 from .serializers import ProdutoSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-# View simples
-@api_view(['GET'])
-@permission_classes([AllowAny])
+
 class  ProdutoListView(generics.ListAPIView):
+    permission_classes = [AllowAny]
     queryset = Produto.objects.all()
     serializer_class = ProdutoSerializer
     filter_backends = [DjangoFilterBackend]
@@ -19,10 +18,10 @@ class  ProdutoListView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        categoria = self.request.query_params.get('categoria')
+        category = self.request.query_params.get('categoria')
 
-        if categoria:
-            queryset = queryset.filter(categoria__iexact=categoria.lower())
+        if category:
+            queryset = queryset.filter(categoria__iexact=category.lower())
         return queryset
     
     def list(self, request, *args, **kwargs):
@@ -30,20 +29,19 @@ class  ProdutoListView(generics.ListAPIView):
         queryset = self.get_queryset()
 
         if not queryset.exists():
-            categoria = request.query_params.get('categoria')
-            if categoria:
-                mensagem = f"Nenhum produto encontrado na categoria '{categoria}'."
+            this_category = request.query_params.get('categoria')
+            if this_category:
+                msg = f"Nenhum produto encontrado na categoria '{this_category}'."
             else:
-                mensagem = "Nenhum produto encontrado."
-            return Response({"mensagem": mensagem}, status=status.HTTP_200_OK)
+                msg = "Nenhum produto encontrado."
+            return Response({"mensagem": msg}, status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
 class ProdutoCreateView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = ProdutoSerializer(data=request.data)
