@@ -1,4 +1,4 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
@@ -6,7 +6,11 @@ from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Produto
 from .serializers import ProdutoSerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
+# View simples
+@api_view(['GET'])
+@permission_classes([AllowAny])
 class  ProdutoListView(generics.ListAPIView):
     queryset = Produto.objects.all()
     serializer_class = ProdutoSerializer
@@ -36,14 +40,9 @@ class  ProdutoListView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
-# View simples
-@api_view(['GET'])
-def list_products(request):
-    products = Produto.objects.all()
-    serializer = ProdutoSerializer(products, many=True)
-    return Response(serializer.data)
 
-# Metodo Post
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 class ProdutoCreateView(APIView):
 
     def post(self, request):
