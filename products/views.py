@@ -6,6 +6,8 @@ from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Produto
 from .serializers import ProdutoSerializer
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 class  ProdutoListView(generics.ListAPIView):
     queryset = Produto.objects.all()
@@ -36,15 +38,10 @@ class  ProdutoListView(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
-# View simples
-@api_view(['GET'])
-def list_products(request):
-    products = Produto.objects.all()
-    serializer = ProdutoSerializer(products, many=True)
-    return Response(serializer.data)
 
 # Metodo Post
 class ProdutoCreateView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = ProdutoSerializer(data=request.data)
