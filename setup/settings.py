@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 import dj_database_url
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,14 +31,27 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'products',
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication']
 }
 
+SIMPLE_JWT = {
+    # Tempo de vida do access token
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    # Tempo de vida do refresh token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
+    # Se True, quando um refresh for usado, será gerado um novo refresh (rotaciona)
+    'ROTATE_REFRESH_TOKENS': False,
+    # Se ROTATE_REFRESH_TOKENS=True e BLACKLIST_AFTER_ROTATION=True o refresh usado é colocado na blacklist.
+    'BLACKLIST_AFTER_ROTATION': True,
+    # Outros parâmetros: ALGORITHM, SIGNING_KEY, AUTH_HEADER_TYPES, etc.
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
